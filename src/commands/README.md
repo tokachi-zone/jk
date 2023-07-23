@@ -4,14 +4,14 @@
 
 ```ts
 import { SlashCommandBuilder } from 'discord.js';
-const command = new SlashCommandBuilder().setName('yourCommand')
+const command = new SlashCommandBuilder().setName('yourCommand');
 
 export default {
   metadata: command.toJSON(),
   callback: async (interaction: CommandInteraction<CacheType>, activeGuild: string) => {
     // ここにコマンドの処理を書く
   }
-}
+};
 ```
 
 コマンドの実装が終わったら `index.ts` を編集してmetadataとcallbackを紐付けてください  
@@ -23,9 +23,6 @@ import yourCommand from 'yourCommand'
 
 export default {
   // ...
-  yourCommand: {
-    metadata: yourCommand.metadata,
-    callback: yourCommand.callback,
-  }
+  yourCommand: { ...yourCommand },
 }
 ```
