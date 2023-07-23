@@ -9,8 +9,9 @@ import {
     Snowflake,
     TextChannel,
     VoiceChannel,
-} from "discord.js";
+} from 'discord.js';
 
+// botが送る先のチャンネルID(key)にサーバーID(value)に対して紐づけておく
 const targets = new Map(Object.entries({
     '446352301934903316': '991505129142497380', // 十勝
     '450226249630220288': '1132689809194889267', // テスト用サーバー(jpnykw)
@@ -28,7 +29,7 @@ export default {
         // VCチャンネル以外からコマンドを使用された場合は無視
         if (interaction.channel!.type !== ChannelType.GuildVoice) {
           interaction.reply({
-            content: "please command in text-in-voice channel",
+            content: 'please command in text-in-voice channel',
             ephemeral: true
           });
           return;
@@ -38,7 +39,7 @@ export default {
         const currentVCMember = (interaction.channel as VoiceChannel)!.members;
         if (!currentVCMember.has((interaction.member as GuildMember).id)) {
           interaction.reply({
-            content: "please join voice channel",
+            content: 'please join voice channel',
             ephemeral: true
           });
           return;
