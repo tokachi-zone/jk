@@ -12,7 +12,7 @@ import {
   VoiceChannel,
 } from 'discord.js';
 
-const targets = new Map(Object.entries({
+const serverChannelMap = new Map(Object.entries({
 // 'Server ID'         : 'Channel ID'
   '446352301934903316': '991505129142497380', // 十勝
   '450226249630220288': '1132689809194889267', // テスト用サーバー(jpnykw)
@@ -41,13 +41,14 @@ export default {
     }
 
     // チャンネルのログを読み、自身の投稿が存在したら消して送り直す
-    const targetChannelId = targets.get(activeGuild);
-    if (targetChannelId === undefined) return;
-    const targetChannel = interaction.client.channels.cache.get(targetChannelId) as TextChannel;
-    const messages: Collection<Snowflake, Message> = await targetChannel.messages.fetch({ limit: 10 });
-    const sentMessages = messages.filter(message => message.author.bot && message.author.id === '1132610021864255588');
-    sentMessages.forEach(async (message) => await message.delete());
+    const outgoingChannelId = serverChannelMap.get(activeGuild);
+    if (outgoingChannelId === undefined) return;
+    const outogoingChannel = interaction.client.channels.cache.get(outgoingChannelId) as TextChannel;
+    const messagesInOutgoingChannel: Collection<Snowflake, Message> = await outogoingChannel.messages.fetch({ limit: 10 });
+    const previousBotMessages = messagesInOutgoingChannel.filter(message => message.author.bot && message.author.id === '1132610021864255588');
+    previousBotMessages.forEach(async (message) => await message.delete());
 
+    // ユーザーが入力した引数を取得する
     const objective = interaction.options.get('objective')?.value;
     if (typeof objective !== 'string') return;
 
@@ -58,7 +59,7 @@ export default {
       .setTimestamp(new Date())
       .addFields({ name: `<#${interaction.channelId}>`, value: objective });
 
-    targetChannel.send({ embeds: [embedsMessage] });
-    interaction.reply({ content: `Updated an activity. Check out for <#${targets.get(activeGuild)}>.`, ephemeral: true });
+      outogoingChannel.send({ embeds: [embedsMessage] });
+    interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
   }
 };
