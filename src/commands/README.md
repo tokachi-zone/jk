@@ -1,21 +1,22 @@
 ## documentation
 
-新しいコマンドを追加する時は以下のテンプレートを使用してください
+Please use the following template when adding new commands.
 
 ```ts
 import { SlashCommandBuilder } from 'discord.js';
+
 const command = new SlashCommandBuilder().setName('yourCommand');
 
 export default {
   metadata: command.toJSON(),
   callback: async (interaction: CommandInteraction<CacheType>, activeGuild: string) => {
-    // ここにコマンドの処理を書く
+    // Write the execution contents of the command here.
   }
 };
 ```
 
-コマンドの実装が終わったら `index.ts` を編集してmetadataとcallbackを紐付けてください  
-（これを忘れるとコマンドが登録されません！）
+After implementing the command, edit `index.ts` and associate metadata and callback.  
+**(If you forget this step, the command will not be registered!)**  
 
 ```ts
 // ...
