@@ -3,6 +3,7 @@ import {
     CacheType,
     Collection,
     CommandInteraction,
+    EmbedBuilder,
     GuildMember,
     Message,
     SlashCommandBuilder,
@@ -18,8 +19,8 @@ const targets = new Map(Object.entries({
 }))
 
 const command = new SlashCommandBuilder().setName('vc')
-    .setDescription('今からやることを伝えよう')
-    .addStringOption(option => option.setName('トピック').setDescription('いまなにしてる？').setRequired(false))
+    .setDescription('Tell everyone what you are doing now.')
+    .addStringOption(option => option.setName('objective').setDescription('What are you doing now?').setRequired(true))
 
 export default {
     metadata: command.toJSON(),
@@ -52,6 +53,18 @@ export default {
         const messages: Collection<Snowflake, Message> = await targetChannel.messages.fetch({ limit: 10 })
         const sentMessages = messages.filter(message => message.author.bot && message.author.id === '1132610021864255588')
         sentMessages.forEach(async (message) => await message.delete())
-        targetChannel.send('hello again!')
+
+        const objective = interaction.options.get('objective')?.value
+        if (typeof objective !== 'string') return
+
+        // TODO: 複数のVCに対応させる
+        const embedsMessage = new EmbedBuilder()
+            .setTitle('New Activity')
+            .setColor(0x4287f5)
+            .setTimestamp(new Date())
+            .addFields({ name: `<#${interaction.channelId}>`, value: objective });
+
+        targetChannel.send({ embeds: [embedsMessage] })
+        interaction.reply(`Updated an activity. Check out for <#${targets.get(activeGuild)}>.`)
       }
 }
