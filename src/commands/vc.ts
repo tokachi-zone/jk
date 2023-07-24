@@ -22,12 +22,14 @@ const command = new SlashCommandBuilder().setName('vc')
   .setDescription('Tell everyone what you are doing now.')
   .addStringOption(option => option.setName('objective').setDescription('What are you doing now?').setRequired(true));
 
+const vcObjectiveMapMemory = new Map();
+
 export default {
   metadata: command.toJSON(),
   callback: async (interaction: CommandInteraction<CacheType>, activeGuild: string) => {
     if (!interaction.inGuild()) return;
 
-    // VCチャンネル以外からコマンドを使用された場合は無視
+    // text-in-voiceチャンネル以外からコマンドを使用した場合
     if (interaction.channel!.type !== ChannelType.GuildVoice) {
       interaction.reply({ content: `You can't use this command out text-in-voice channel.`, ephemeral: true });
       return;
@@ -40,7 +42,7 @@ export default {
       return;
     }
 
-    // チャンネルのログを読み、自身の投稿が存在したら消して送り直す
+    // チャンネルのログを読み、自身の投稿が存在したら削除する
     const outgoingChannelId = serverChannelMap.get(activeGuild);
     if (outgoingChannelId === undefined) return;
     const outogoingChannel = interaction.client.channels.cache.get(outgoingChannelId) as TextChannel;
@@ -52,14 +54,24 @@ export default {
     const objective = interaction.options.get('objective')?.value;
     if (typeof objective !== 'string') return;
 
-    // TODO: 複数のVCに対応させる
+    // 複数のVCで同時に使う場合を想定してマッピング
+    vcObjectiveMapMemory.set(interaction.channelId, objective);
+
+    // 更新時に他のVCをチェックし、人が居ないチャンネルはマッピングから削除する
+    [...vcObjectiveMapMemory].map(([channelId]) => {
+      const voiceChannel = interaction.client.channels.cache.get(channelId) as VoiceChannel;
+      if (voiceChannel?.members.size === 0) vcObjectiveMapMemory.delete(channelId);
+    });
+
+    // メッセージを作成して送信し、完了したらコマンド使用者のみに見える返事をする
     const embedsMessage = new EmbedBuilder()
       .setTitle('New Activity')
       .setColor(0x4287f5)
       .setTimestamp(new Date())
-      .addFields({ name: `<#${interaction.channelId}>`, value: objective });
+      .addFields([...vcObjectiveMapMemory].map(([channelId, objective]) => ({ name: `<#${channelId}>`, value: objective })));
 
-      outogoingChannel.send({ embeds: [embedsMessage] });
-    interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
+    outogoingChannel.send({ embeds: [embedsMessage] }).then(() => {
+      interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
+    });
   }
 };
