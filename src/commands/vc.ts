@@ -48,7 +48,7 @@ export default {
     const outogoingChannel = interaction.client.channels.cache.get(outgoingChannelId) as TextChannel;
     const messagesInOutgoingChannel: Collection<Snowflake, Message> = await outogoingChannel.messages.fetch({ limit: 10 });
     const previousBotMessages = messagesInOutgoingChannel.filter(message => message.author.bot && message.author.id === '1132610021864255588');
-    previousBotMessages.forEach(async (message) => await message.delete());
+    previousBotMessages.forEach((message) => message.delete());
 
     // ユーザーが入力した引数を取得する
     const objective = interaction.options.get('objective')?.value;
