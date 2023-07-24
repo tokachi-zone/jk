@@ -17,6 +17,7 @@ const serverChannelMap = new Map(Object.entries({
 // 'Server ID'         : 'Channel ID'
   '446352301934903316': '991505129142497380', // 十勝
   '450226249630220288': '1132689809194889267', // テスト用サーバー(jpnykw)
+  '431420500518895636': '1132980234250096680', // テスト用サーバー(layState)
 }));
 
 const command = new SlashCommandBuilder().setName('vc')
