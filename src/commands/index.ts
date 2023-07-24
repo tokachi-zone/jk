@@ -2,8 +2,8 @@ import { CacheType, CommandInteraction, RESTPostAPIChatInputApplicationCommandsJ
 import vc from './vc';
 
 export interface Command {
-  metadata: RESTPostAPIChatInputApplicationCommandsJSONBody
-  callback: (interaction: CommandInteraction<CacheType>, activeGuild: string) => Promise<void>
-}
+  metadata: RESTPostAPIChatInputApplicationCommandsJSONBody;
+  callback: (interaction: CommandInteraction<CacheType>, activeGuild: string) => Promise<void>;
+};
 
-export default [vc]
+export default [vc];
