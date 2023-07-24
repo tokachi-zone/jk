@@ -25,7 +25,7 @@ const command = new SlashCommandBuilder().setName('vc')
 
 const vcObjectiveMap = new Map();
 
-export const updateMappingAndMessages = async (client: Client, activeGuild: string) => {
+export const updateVcObjectiveMappingAndMessage = async (client: Client, activeGuild: string) => {
   // チャンネルのログを読み、自身の投稿が存在したら削除する
   const outgoingChannelId = serverChannelMap.get(activeGuild);
   if (outgoingChannelId === undefined) return;
@@ -76,7 +76,7 @@ export default {
     // 複数のVCで同時に使う場合を想定してマッピング
     vcObjectiveMap.set(interaction.channelId, objective);
 
-    updateMappingAndMessages(interaction.client, activeGuild).then(() => {
+    updateVcObjectiveMappingAndMessage(interaction.client, activeGuild).then(() => {
       interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
     });
   }
