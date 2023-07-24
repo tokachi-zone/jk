@@ -1,4 +1,5 @@
-import { CacheType, Client, GatewayIntentBits, Interaction, Partials } from 'discord.js';
+import { CacheType, Client, GatewayIntentBits, Interaction, Partials, VoiceChannel, VoiceState } from 'discord.js';
+import { updateMappingAndMessages } from './commands/vc';
 import commands, { Command } from './commands';
 import guilds from './guilds';
 import dotenv from 'dotenv';
@@ -18,6 +19,13 @@ client.on('interactionCreate', async (interaction: Interaction<CacheType>) => {
     });
   }
 });
+
+client.on('voiceStateUpdate', async (oldState: VoiceState, newState: VoiceState) => {
+  if (newState.channelId === oldState.channelId) return;
+  const channelId = oldState.channelId || newState.channelId;
+  if (channelId === null) return;
+  if ((client.channels.cache.get(channelId) as VoiceChannel).members.size === 0) updateMappingAndMessages(client, activeGuild);
+})
 
 client.once('ready', () => {
   client.application?.commands.set(commands.map(({ metadata }: Command) => metadata), activeGuild);
