@@ -1,5 +1,5 @@
 import { CacheType, Client, GatewayIntentBits, Interaction, Partials } from 'discord.js';
-import commands from './commands';
+import commands, { Command } from './commands';
 import guilds from './guilds';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -13,14 +13,14 @@ const client = new Client({
 
 client.on('interactionCreate', async (interaction: Interaction<CacheType>) => {
   if (interaction.isCommand()) {
-    Object.entries(commands).map(([_, { metadata, callback }]) => {
+    commands.map(({ metadata, callback }: Command) => {
       if (metadata.name === interaction.commandName) callback(interaction, activeGuild);
     });
   }
 });
 
 client.once('ready', () => {
-  client.application?.commands.set(Object.entries(commands).map(([_, { metadata }]) => metadata), activeGuild);
+  client.application?.commands.set(commands.map(({ metadata }: Command) => metadata), activeGuild);
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN);

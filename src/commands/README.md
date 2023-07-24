@@ -19,11 +19,14 @@ After implementing the command, edit `index.ts` and associate metadata and callb
 **(If you forget this step, the command will not be registered!)**  
 
 ```ts
+import { CacheType, CommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord.js'
 // ...
-import yourCommand from 'yourCommand'
+import yourCommand from 'yourCommand';
 
-export default {
-  // ...
-  yourCommand: { ...yourCommand },
+export interface Command {
+  metadata: RESTPostAPIChatInputApplicationCommandsJSONBody
+  callback: (interaction: CommandInteraction<CacheType>, activeGuild: string) => Promise<void>
 }
+
+export default [/*...*/, yourCommand]
 ```
