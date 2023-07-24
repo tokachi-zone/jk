@@ -1,4 +1,4 @@
-import { CacheType, CommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord.js'
+import { CacheType, CommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord.js';
 import vc from './vc';
 
 export interface Command {
