@@ -5,7 +5,7 @@ import guilds from './guilds';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const activeGuild = guilds.jpnykwDevServer; // ここで対象サーバーを選ぶ
+const activeGuild = guilds.tokachi; // ここで対象サーバーを選ぶ
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
