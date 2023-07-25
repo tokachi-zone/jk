@@ -1,30 +1,34 @@
-import { GatewayIntentBits, Client, Partials, Message } from 'discord.js'
-import dotenv from 'dotenv'
-dotenv.config()
+import { CacheType, Client, GatewayIntentBits, Interaction, Partials, VoiceChannel, VoiceState } from 'discord.js';
+import { updateVcObjectiveMappingAndMessage } from './commands/vc';
+import commands, { Command } from './commands';
+import guilds from './guilds';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const activeGuild = guilds.jpnykwDevServer; // ここで対象サーバーを選ぶ
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
   partials: [Partials.Message, Partials.Channel],
+});
+
+client.on('interactionCreate', async (interaction: Interaction<CacheType>) => {
+  if (interaction.isCommand()) {
+    commands.map(({ metadata, callback }: Command) => {
+      if (metadata.name === interaction.commandName) callback(interaction, activeGuild);
+    });
+  }
+});
+
+client.on('voiceStateUpdate', async (oldState: VoiceState, newState: VoiceState) => {
+  if (newState.channelId === oldState.channelId) return;
+  const channelId = oldState.channelId || newState.channelId;
+  if (channelId === null) return;
+  if ((client.channels.cache.get(channelId) as VoiceChannel).members.size === 0) updateVcObjectiveMappingAndMessage(client, activeGuild);
 })
 
 client.once('ready', () => {
-    console.log('Ready!')
-    if(client.user){
-        console.log(client.user.tag)
-    }
-})
+  client.application?.commands.set(commands.map(({ metadata }: Command) => metadata), activeGuild);
+});
 
-client.on('messageCreate', async (message: Message) => {
-    if (message.author.bot) return
-    if (message.content === '!hello') {
-        message.channel.send('world!');
-    }
-})
-
-client.login(process.env.DISCORD_BOT_TOKEN)
+client.login(process.env.DISCORD_BOT_TOKEN);
