@@ -283,6 +283,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node-cron@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "@types/node-cron@npm:3.0.8"
+  checksum: e45f3fb8e0f3ed57bb6bc7b365a3fd50a93e64c0751381bb6db5d8e758f8b54b6af61bf68c72fc5be3b550c01f06b16dca56c05e9507cd3f345c39f44f250ec2
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 20.4.4
   resolution: "@types/node@npm:20.4.4"
@@ -1652,6 +1659,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "jk@workspace:."
   dependencies:
+    "@types/node-cron": ^3.0.8
     "@typescript-eslint/eslint-plugin": ^5.52.0
     discord.js: ^14.11.0
     dotenv: ^16.3.1
@@ -1660,6 +1668,7 @@ __metadata:
     eslint-plugin-import: ^2.25.2
     eslint-plugin-n: "^15.0.0 || ^16.0.0 "
     eslint-plugin-promise: ^6.0.0
+    node-cron: ^3.0.2
     ts-node: ^10.9.1
     typescript: "*"
   languageName: unknown
@@ -1815,6 +1824,15 @@ __metadata:
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
   checksum: 23ad088b08f898fc9b53011d7bb78ec48e79de7627e01ab5518e806033861bef68d5b0cd0e2205c2f36690ac9571ff6bcb05eb777ced2eeda8d4ac5b44592c3d
+  languageName: node
+  linkType: hard
+
+"node-cron@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "node-cron@npm:3.0.2"
+  dependencies:
+    uuid: 8.3.2
+  checksum: dd21585c0d4069a0752022dad9b8380a4393c4783ec78355ffa99ff32b018c3743a35d4ebf9d7c7863949e94e302b440f58c884eb4960e71c7260d817e2d3f25
   languageName: node
   linkType: hard
 
@@ -2473,6 +2491,15 @@ __metadata:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 474acf1146cb2701fe3b074892217553dfcf9a031280919ba1b8d651a068c9b15d863b7303cb15bd00a862b498e6cf4ad7b4a08fb134edd5a6f7641681cb54a2
+  languageName: node
+  linkType: hard
+
+"uuid@npm:8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
   languageName: node
   linkType: hard
 

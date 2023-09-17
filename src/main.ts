@@ -1,6 +1,7 @@
 import { CacheType, Client, GatewayIntentBits, Interaction, Partials, VoiceChannel, VoiceState } from 'discord.js';
 import { updateVcObjectiveMappingAndMessage } from './commands/vc';
 import commands, { Command } from './commands';
+import events, { Event } from './events';
 import guilds from './guilds';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -28,6 +29,9 @@ client.on('voiceStateUpdate', async (oldState: VoiceState, newState: VoiceState)
 })
 
 client.once('ready', () => {
+  events.map(({ callback }: Event) => {
+    callback(client, activeGuild)
+  });
   client.application?.commands.set(commands.map(({ metadata }: Command) => metadata), activeGuild);
 });
 
