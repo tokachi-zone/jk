@@ -32,7 +32,6 @@ const command = new SlashCommandBuilder()
 
 const vcObjectiveMap = new Map();
 
-
 export const updateVcObjectiveMappingAndMessage = async (client: Client, activeGuild: string) => {
   // チャンネルのログを読み、自身の投稿が存在したら削除する
   const outgoingChannelId = serverChannelMap.get(activeGuild);
