@@ -20,9 +20,15 @@ const serverChannelMap = new Map(Object.entries({
   '431420500518895636': '1132980234250096680', // テスト用サーバー(layState)
 }));
 
-const command = new SlashCommandBuilder().setName('vc')
+const command = new SlashCommandBuilder()
+  .setName('vc')
   .setDescription('Tell everyone what you are doing now.')
-  .addStringOption(option => option.setName('objective').setDescription('What are you doing now?').setRequired(true));
+  .addSubcommand(subcommand => 
+    subcommand
+      .setName('create')
+      .setDescription('create activity')
+      .addStringOption(option => option.setName('objective').setDescription('What are you doing now?').setRequired(true)))
+  .addSubcommand(subcommand => subcommand.setName('delete').setDescription('delete objective from billbord'));
 
 const vcObjectiveMap = new Map();
 
@@ -55,6 +61,7 @@ export const updateVcObjectiveMappingAndMessage = async (client: Client, activeG
 export default {
   metadata: command.toJSON(),
   callback: async (interaction: CommandInteraction<CacheType>, activeGuild: string) => {
+    if (!interaction.isChatInputCommand()) return;
     if (!interaction.inGuild()) return;
 
     // text-in-voiceチャンネル以外からコマンドを使用した場合
@@ -70,15 +77,28 @@ export default {
       return;
     }
 
-    // ユーザーが入力した引数を取得する
-    const objective = interaction.options.get('objective')?.value;
-    if (typeof objective !== 'string') return;
+    // Activityを削除する場合
+    if (interaction.options.getSubcommand() === "delete") {
+      if(vcObjectiveMap.has(interaction.channelId)){
+        vcObjectiveMap.delete(interaction.channelId);
+        updateVcObjectiveMappingAndMessage(interaction.client, activeGuild).then(() => {
+          interaction.reply({ content: `Deleted the activity.`, ephemeral: true });
+        });
+      }else{
+        interaction.reply({ content: `No activity!`, ephemeral: true });
+      }
+      return;
+    } else if (interaction.options.getSubcommand() === "create") {
+      // ユーザーが入力した引数を取得する
+      const objective = interaction.options.get('objective')?.value;
+      if (typeof objective !== 'string') return;
 
-    // 複数のVCで同時に使う場合を想定してマッピング
-    vcObjectiveMap.set(interaction.channelId, objective);
+      // 複数のVCで同時に使う場合を想定してマッピング
+      vcObjectiveMap.set(interaction.channelId, objective);
 
-    updateVcObjectiveMappingAndMessage(interaction.client, activeGuild).then(() => {
-      interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
-    });
+      updateVcObjectiveMappingAndMessage(interaction.client, activeGuild).then(() => {
+        interaction.reply({ content: `Updated an activity. Check out for <#${serverChannelMap.get(activeGuild)}>.`, ephemeral: true });
+      });
+    }
   }
 };
